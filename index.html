@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>EUR/TND Rate Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 640px;
+      margin: 4rem auto;
+      padding: 0 1.5rem;
+      color: #1a1a1a;
+    }
+    .rate-card {
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+    }
+    .rate-value {
+      font-size: 3rem;
+      font-weight: 700;
+      margin: 0.5rem 0;
+    }
+    .rate-date {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin: 2rem 0 1rem;
+      border-bottom: 1px solid #ddd;
+    }
+    .tab-btn {
+      padding: 0.6rem 1rem;
+      border: none;
+      background: none;
+      font-size: 0.95rem;
+      cursor: pointer;
+      color: #666;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+    .tab-btn.active {
+      color: #1a1a1a;
+      font-weight: 600;
+      border-bottom-color: #1a1a1a;
+    }
+    .tab-panel {
+      display: none;
+    }
+    .tab-panel.active {
+      display: block;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      color: #666;
+      font-weight: 600;
+    }
+    button {
+      margin-top: 1.5rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background: #1a1a1a;
+      color: #fff;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #333;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    #status {
+      color: #999;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>EUR / TND — Achat Rate</h1>
+
+  <div class="rate-card">
+    <div class="rate-date" id="rate-date">Loading…</div>
+    <div class="rate-value" id="rate-value">—</div>
+    <div class="rate-date">TND per 1 EUR (STB Bank, achat)</div>
+    <button id="download-btn">Download full archive (CSV)</button>
+    <div id="status"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="current">Current</button>
+    <button class="tab-btn" data-tab="historic">Historic</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-current">
+    <p id="average-explainer" style="color:#666; font-size:0.9rem;"></p>
+  </div>
+
+  <div class="tab-panel" id="tab-historic">
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Achat rate</th></tr>
+      </thead>
+      <tbody id="historic-body"></tbody>
+    </table>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
