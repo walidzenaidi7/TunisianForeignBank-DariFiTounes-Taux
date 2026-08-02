@@ -184,17 +184,20 @@
     }
 
     .flag {
-      display: grid;
-      place-items: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex: 0 0 auto;
       width: 40px;
       height: 32px;
+      padding: 0;
       border: 1px solid #ececec;
       border-radius: 8px;
       background: #fff;
       box-shadow: 0 3px 9px rgba(0,0,0,0.06);
       font-size: 1.45rem;
       line-height: 1;
+      text-align: center;
     }
 
     .currency strong,
@@ -721,17 +724,15 @@
             </div>
           </div>
 
-          <p class="history-note">
-            Les données historiques sont chargées automatiquement par
-            le fichier <strong>app.js</strong>.
-          </p>
         </div>
       </aside>
     </section>
 
     <p class="notice">
-      Le tableau multidevise contient des valeurs fictives fournies à titre de présentation.
-      Le taux EUR/TND est chargé par le fichier <strong>app.js</strong>.
+      Le taux de référence est calculé à partir de la moyenne des cours d’achat EUR/TND
+      observés au cours des 30 derniers jours. Cette méthode permet de proposer un taux
+      plus stable, capable d’absorber les éventuelles variations du marché entre le début
+      de la rédaction de la fiche comité et la soumission de la promesse de vente.
     </p>
 
   </main>
