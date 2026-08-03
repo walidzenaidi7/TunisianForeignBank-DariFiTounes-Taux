@@ -2,7 +2,7 @@ name: Scrape EUR/TND rate
 
 on:
   schedule:
-    - cron: "0 8 * * 1-5"
+    - cron: "30 12 * * 1-5"
   workflow_dispatch: {}
 
 permissions:
