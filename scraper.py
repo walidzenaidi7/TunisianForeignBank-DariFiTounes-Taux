@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
-"""Scrapes the EUR/TND achat rate from STB Bank and appends it to docs/data/rates.json.
+"""Récupère les cours de change chez STB Bank.
 
-Usage: python3 scraper.py
+- Ajoute le taux EUR (achat) à docs/data/rates.json  (série pour la moyenne 30j).
+- Écrit un instantané de tout le tableau dans docs/data/latest.json.
+
+Usage : python3 scraper.py
 """
 import datetime
 import json
@@ -18,62 +21,117 @@ HEADERS = {
         "(KHTML, like Gecko) Chrome/120.0 Safari/537.36"
     )
 }
-DATA_PATH = pathlib.Path(__file__).parent / "docs" / "data" / "rates.json"
+DATA_DIR = pathlib.Path(__file__).parent / "docs" / "data"
+RATES_PATH = DATA_DIR / "rates.json"       # série EUR (moyenne 30j)
+LATEST_PATH = DATA_DIR / "latest.json"     # instantané du tableau complet
 
 
-def fetch_eur_rate():
+def parse_number(text: str) -> float:
+    """Tolère la virgule décimale et les espaces (ex. '3,347' ou '3 347,0')."""
+    cleaned = (
+        text.strip()
+        .replace("\xa0", "")   # espace insécable
+        .replace(" ", "")
+        .replace(",", ".")
+    )
+    return float(cleaned)
+
+
+def fetch_table():
+    """Retourne (rates_dict, date_iso).
+
+    rates_dict = { 'EUR': {'achat': 3.34, 'vente': 3.41}, 'USD': {...}, ... }
+    """
     response = requests.get(URL, headers=HEADERS, timeout=15)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, "html.parser")
 
+    rates = {}
+    date_iso = None
+
     for row in soup.select("table tbody tr"):
         code_img = row.select_one("td.code-change img[data-codedevise]")
-        if code_img and code_img["data-codedevise"] == "EUR":
-            achat = row.select_one("td.achat-change").get_text(strip=True)
-            date_text = row.select_one("td.date-change").get_text(strip=True)
-            return achat, date_text
+        if not code_img:
+            continue
+        code = code_img["data-codedevise"].strip().upper()
 
-    raise ValueError("EUR row not found on the page — site markup may have changed")
+        achat_cell = row.select_one("td.achat-change")
+        vente_cell = row.select_one("td.vente-change")
+        date_cell = row.select_one("td.date-change")
+
+        entry = {}
+        if achat_cell:
+            try:
+                entry["achat"] = parse_number(achat_cell.get_text())
+            except ValueError:
+                entry["achat"] = None
+        if vente_cell:
+            try:
+                entry["vente"] = parse_number(vente_cell.get_text())
+            except ValueError:
+                entry["vente"] = None
+
+        if entry:
+            rates[code] = entry
+
+        if date_iso is None and date_cell:
+            date_iso = to_iso_date(date_cell.get_text(strip=True))
+
+    if not rates:
+        raise ValueError(
+            "Aucune devise trouvee sur la page — le HTML du site a peut-etre change"
+        )
+    return rates, date_iso
 
 
 def to_iso_date(dd_mm_yy: str) -> str:
     day, month, year = dd_mm_yy.split("/")
-    return f"20{year}-{month}-{day}"
+    year = year if len(year) == 4 else f"20{year}"
+    return f"{year}-{month}-{day}"
 
 
-def load_archive() -> list:
-    if DATA_PATH.exists():
-        return json.loads(DATA_PATH.read_text())
-    return []
+def load_json(path, default):
+    if path.exists():
+        return json.loads(path.read_text())
+    return default
 
 
-def save_archive(archive: list) -> None:
-    DATA_PATH.parent.mkdir(parents=True, exist_ok=True)
-    DATA_PATH.write_text(json.dumps(archive, indent=2) + "\n")
+def save_json(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
 
 
 def main():
-    achat_text, date_text = fetch_eur_rate()
-    rate_date = to_iso_date(date_text)
-    archive = load_archive()
+    rates, date_iso = fetch_table()
+    now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
-    if archive and archive[-1]["rate_date"] == rate_date:
-        print(f"Rate for {rate_date} already recorded ({archive[-1]['achat']}), skipping.")
+    # 1) Instantané complet du tableau (écrase à chaque fois)
+    save_json(LATEST_PATH, {"date": date_iso, "scraped_at": now_iso, "rates": rates})
+    print(f"Tableau enregistre ({len(rates)} devises) pour le {date_iso}.")
+
+    # 2) Série EUR pour la moyenne 30 jours (ajout sans doublon)
+    eur = rates.get("EUR")
+    if not eur or eur.get("achat") is None:
+        print("EUR introuvable dans le tableau, serie non mise a jour.", file=sys.stderr)
         return
 
-    entry = {
-        "rate_date": rate_date,
-        "achat": float(achat_text),
-        "scraped_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-    }
-    archive.append(entry)
-    save_archive(archive)
-    print(f"Recorded EUR achat rate {entry['achat']} for {rate_date}.")
+    archive = load_json(RATES_PATH, [])
+    if archive and archive[-1]["rate_date"] == date_iso:
+        print(f"Taux EUR du {date_iso} deja enregistre ({archive[-1]['achat']}), on saute.")
+        return
+
+    archive.append({
+        "rate_date": date_iso,
+        "achat": eur["achat"],
+        "scraped_at": now_iso,
+    })
+    save_json(RATES_PATH, archive)
+    print(f"Taux EUR achat {eur['achat']} enregistre pour le {date_iso}.")
 
 
 if __name__ == "__main__":
     try:
         main()
     except Exception as exc:
-        print(f"Scrape failed: {exc}", file=sys.stderr)
+        print(f"Echec du scraping : {exc}", file=sys.stderr)
         sys.exit(1)
