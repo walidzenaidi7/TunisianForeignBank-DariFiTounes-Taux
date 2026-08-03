@@ -9,12 +9,21 @@ const WINDOW_SIZE = 30;
 
 // Devises affichées dans le tableau, dans l'ordre.
 // Le robot fournit les nombres ; ici on ne garde que l'habillage (drapeau + nom).
+const FLAGS = {
+  eu: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iZmxhZy1pY29ucy1ldSIgdmlld0JveD0iMCAwIDY0MCA0ODAiPgogIDxkZWZzPgogICAgPGcgaWQ9ImV1LWQiPgogICAgICA8ZyBpZD0iZXUtYiI+CiAgICAgICAgPHBhdGggaWQ9ImV1LWEiIGQ9Im0wLTEtLjMgMSAuNS4xeiIvPgogICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI2V1LWEiIHRyYW5zZm9ybT0ic2NhbGUoLTEgMSkiLz4KICAgICAgPC9nPgogICAgICA8ZyBpZD0iZXUtYyI+CiAgICAgICAgPHVzZSB4bGluazpocmVmPSIjZXUtYiIgdHJhbnNmb3JtPSJyb3RhdGUoNzIpIi8+CiAgICAgICAgPHVzZSB4bGluazpocmVmPSIjZXUtYiIgdHJhbnNmb3JtPSJyb3RhdGUoMTQ0KSIvPgogICAgICA8L2c+CiAgICAgIDx1c2UgeGxpbms6aHJlZj0iI2V1LWMiIHRyYW5zZm9ybT0ic2NhbGUoLTEgMSkiLz4KICAgIDwvZz4KICA8L2RlZnM+CiAgPHBhdGggZmlsbD0iIzAzOSIgZD0iTTAgMGg2NDB2NDgwSDB6Ii8+CiAgPGcgZmlsbD0iI2ZjMCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzIwIDI0Mi4zKXNjYWxlKDIzLjcwMzcpIj4KICAgIDx1c2UgeGxpbms6aHJlZj0iI2V1LWQiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHk9Ii02Ii8+CiAgICA8dXNlIHhsaW5rOmhyZWY9IiNldS1kIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB5PSI2Ii8+CiAgICA8ZyBpZD0iZXUtZSI+CiAgICAgIDx1c2UgeGxpbms6aHJlZj0iI2V1LWQiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHg9Ii02Ii8+CiAgICAgIDx1c2UgeGxpbms6aHJlZj0iI2V1LWQiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHRyYW5zZm9ybT0icm90YXRlKC0xNDQgLTIuMyAtMi4xKSIvPgogICAgICA8dXNlIHhsaW5rOmhyZWY9IiNldS1kIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB0cmFuc2Zvcm09InJvdGF0ZSgxNDQgLTIuMSAtMi4zKSIvPgogICAgICA8dXNlIHhsaW5rOmhyZWY9IiNldS1kIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB0cmFuc2Zvcm09InJvdGF0ZSg3MiAtNC43IC0yKSIvPgogICAgICA8dXNlIHhsaW5rOmhyZWY9IiNldS1kIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB0cmFuc2Zvcm09InJvdGF0ZSg3MiAtNSAuNSkiLz4KICAgIDwvZz4KICAgIDx1c2UgeGxpbms6aHJlZj0iI2V1LWUiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHRyYW5zZm9ybT0ic2NhbGUoLTEgMSkiLz4KICA8L2c+Cjwvc3ZnPgo=",
+  us: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJmbGFnLWljb25zLXVzIiB2aWV3Qm94PSIwIDAgNjQwIDQ4MCI+CiAgPHBhdGggZmlsbD0iI2JkM2Q0NCIgZD0iTTAgMGg2NDB2NDgwSDAiLz4KICA8cGF0aCBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMzciIGQ9Ik0wIDU1LjNoNjQwTTAgMTI5aDY0ME0wIDIwM2g2NDBNMCAyNzdoNjQwTTAgMzUxaDY0ME0wIDQyNWg2NDAiLz4KICA8cGF0aCBmaWxsPSIjMTkyZjVkIiBkPSJNMCAwaDM2NC44djI1OC41SDAiLz4KICA8bWFya2VyIGlkPSJ1cy1hIiBtYXJrZXJIZWlnaHQ9IjMwIiBtYXJrZXJXaWR0aD0iMzAiPgogICAgPHBhdGggZmlsbD0iI2ZmZiIgZD0ibTE0IDAgOSAyN0wwIDEwaDI4TDUgMjd6Ii8+CiAgPC9tYXJrZXI+CiAgPHBhdGggZmlsbD0ibm9uZSIgbWFya2VyLW1pZD0idXJsKCN1cy1hKSIgZD0ibTAgMCAxNiAxMWg2MSA2MSA2MSA2MSA2MEw0NyAzN2g2MSA2MSA2MCA2MUwxNiA2M2g2MSA2MSA2MSA2MSA2MEw0NyA4OWg2MSA2MSA2MCA2MUwxNiAxMTVoNjEgNjEgNjEgNjEgNjBMNDcgMTQxaDYxIDYxIDYwIDYxTDE2IDE2Nmg2MSA2MSA2MSA2MSA2MEw0NyAxOTJoNjEgNjEgNjAgNjFMMTYgMjE4aDYxIDYxIDYxIDYxIDYweiIvPgo8L3N2Zz4K",
+  gb: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJmbGFnLWljb25zLWdiIiB2aWV3Qm94PSIwIDAgNjQwIDQ4MCI+CiAgPHBhdGggZmlsbD0iIzAxMjE2OSIgZD0iTTAgMGg2NDB2NDgwSDB6Ii8+CiAgPHBhdGggZmlsbD0iI0ZGRiIgZD0ibTc1IDAgMjQ0IDE4MUw1NjIgMGg3OHY2Mkw0MDAgMjQxbDI0MCAxNzh2NjFoLTgwTDMyMCAzMDEgODEgNDgwSDB2LTYwbDIzOS0xNzhMMCA2NFYweiIvPgogIDxwYXRoIGZpbGw9IiNDODEwMkUiIGQ9Im00MjQgMjgxIDIxNiAxNTl2NDBMMzY5IDI4MXptLTE4NCAyMCA2IDM1TDU0IDQ4MEgwek02NDAgMHYzTDM5MSAxOTFsMi00NEw1OTAgMHpNMCAwbDIzOSAxNzZoLTYwTDAgNDJ6Ii8+CiAgPHBhdGggZmlsbD0iI0ZGRiIgZD0iTTI0MSAwdjQ4MGgxNjBWMHpNMCAxNjB2MTYwaDY0MFYxNjB6Ii8+CiAgPHBhdGggZmlsbD0iI0M4MTAyRSIgZD0iTTAgMTkzdjk2aDY0MHYtOTZ6TTI3MyAwdjQ4MGg5NlYweiIvPgo8L3N2Zz4K",
+  ch: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJmbGFnLWljb25zLWNoIiB2aWV3Qm94PSIwIDAgNjQwIDQ4MCI+CiAgPGcgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2Utd2lkdGg9IjFwdCI+CiAgICA8cGF0aCBmaWxsPSJyZWQiIGQ9Ik0wIDBoNjQwdjQ4MEgweiIvPgogICAgPGcgZmlsbD0iI2ZmZiI+CiAgICAgIDxwYXRoIGQ9Ik0xNzAgMTk1aDMwMHY5MEgxNzB6Ii8+CiAgICAgIDxwYXRoIGQ9Ik0yNzUgOTBoOTB2MzAwaC05MHoiLz4KICAgIDwvZz4KICA8L2c+Cjwvc3ZnPgo=",
+  ca: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJmbGFnLWljb25zLWNhIiB2aWV3Qm94PSIwIDAgNjQwIDQ4MCI+CiAgPHBhdGggZmlsbD0iI2ZmZiIgZD0iTTE1MC4xIDBoMzM5Ljd2NDgwSDE1MHoiLz4KICA8cGF0aCBmaWxsPSIjZDUyYjFlIiBkPSJNLTE5LjcgMGgxNjkuOHY0ODBILTE5Ljd6bTUwOS41IDBoMTY5Ljh2NDgwSDQ4OS45ek0yMDEgMjMybC0xMy4zIDQuNCA2MS40IDU0YzQuNyAxMy43LTEuNiAxNy44LTUuNiAyNWw2Ni42LTguNC0xLjYgNjcgMTMuOS0uMy0zLjEtNjYuNiA2Ni43IDhjLTQuMS04LjctNy44LTEzLjMtNC0yNy4ybDYxLjMtNTEtMTAuNy00Yy04LjgtNi44IDMuOC0zMi42IDUuNi00OC45IDAgMC0zNS43IDEyLjMtMzggNS44bC05LjItMTcuNS0zMi42IDM1LjhjLTMuNS45LTUtLjUtNS45LTMuNWwxNS03NC44LTIzLjggMTMuNHEtMy4yIDEuMy01LjItMi4ybC0yMy00Ni0yMy42IDQ3LjhxLTIuOCAyLjUtNSAuN0wyNjQgMTMwLjhsMTMuNyA3NC4xYy0xLjEgMy0zLjcgMy44LTYuNyAyLjJsLTMxLjItMzUuM2MtNCA2LjUtNi44IDE3LjEtMTIuMiAxOS41cy0yMy41LTQuNS0zNS42LTdjNC4yIDE0LjggMTcgMzkuNiA5IDQ3LjciLz4KPC9zdmc+Cg==",
+  tn: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJmbGFnLWljb25zLXRuIiB2aWV3Qm94PSIwIDAgNjQwIDQ4MCI+CiAgPHBhdGggZmlsbD0iI2U3MDAxMyIgZD0iTTAgMGg2NDB2NDgwSDB6Ii8+CiAgPHBhdGggZmlsbD0iI2ZmZiIgZD0iTTMyMCAxMTkuMmExIDEgMCAwIDAtMSAyNDAuMyAxIDEgMCAwIDAgMS0yNDAuM00zOTIgMjkzYTkwIDkwIDAgMSAxIDAtMTA3IDcyIDcyIDAgMSAwIDAgMTA3bS00LjctMjEuNy0zNy40LTEyLjEtMjMuMSAzMS44di0zOS4zbC0zNy40LTEyLjIgMzcuNC0xMi4yVjE4OGwyMy4xIDMxLjggMzcuNC0xMi4xLTIzLjEgMzEuOHoiLz4KPC9zdmc+Cg==",
+};
+
 const CURRENCIES = [
-  { code: "EUR", name: "Euro",              flag: "🇪🇺", aria: "Drapeau de l'Union européenne" },
-  { code: "USD", name: "Dollar américain",  flag: "🇺🇸", aria: "Drapeau des États-Unis" },
-  { code: "GBP", name: "Livre sterling",    flag: "🇬🇧", aria: "Drapeau du Royaume-Uni" },
-  { code: "CHF", name: "Franc suisse",      flag: "🇨🇭", aria: "Drapeau de la Suisse" },
-  { code: "CAD", name: "Dollar canadien",   flag: "🇨🇦", aria: "Drapeau du Canada" },
+  { code: "EUR", name: "Euro",              flag: FLAGS.eu, aria: "Drapeau de l'Union européenne" },
+  { code: "USD", name: "Dollar américain",  flag: FLAGS.us, aria: "Drapeau des États-Unis" },
+  { code: "GBP", name: "Livre sterling",    flag: FLAGS.gb, aria: "Drapeau du Royaume-Uni" },
+  { code: "CHF", name: "Franc suisse",      flag: FLAGS.ch, aria: "Drapeau de la Suisse" },
+  { code: "CAD", name: "Dollar canadien",   flag: FLAGS.ca, aria: "Drapeau du Canada" },
 ];
 
 const rateValueEl = document.getElementById("rate-value");
@@ -66,7 +75,7 @@ async function loadTable() {
       <tr>
         <td>
           <div class="currency">
-            <span class="flag" aria-label="${c.aria}">${c.flag}</span>
+            <span class="flag" aria-label="${c.aria}"><img class="flag-img" src="${c.flag}" alt=""></span>
             <span>
               <strong>${c.code}</strong>
               <span class="currency-name">${c.name}</span>
