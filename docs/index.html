@@ -137,6 +137,15 @@
       text-transform: uppercase;
     }
 
+    .updated {
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 750;
+      text-align: right;
+      line-height: 1.35;
+    }
+
     .table-wrap {
       overflow-x: auto;
     }
@@ -558,7 +567,7 @@
             <p>Marché des changes</p>
             <h1>Tableau de change</h1>
           </div>
-          <span class="fiction">Valeurs fictives</span>
+          <span class="updated" id="fx-updated">—</span>
         </div>
 
         <div class="table-wrap">
@@ -570,73 +579,7 @@
                 <th>Vente</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <div class="currency">
-                    <span class="flag" aria-label="Drapeau de l'Union européenne">🇪🇺</span>
-                    <span>
-                      <strong>EUR</strong>
-                      <span class="currency-name">Euro</span>
-                    </span>
-                  </div>
-                </td>
-                <td class="rate">3,340</td>
-                <td class="rate">3,410</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="currency">
-                    <span class="flag" aria-label="Drapeau des États-Unis">🇺🇸</span>
-                    <span>
-                      <strong>USD</strong>
-                      <span class="currency-name">Dollar américain</span>
-                    </span>
-                  </div>
-                </td>
-                <td class="rate">3,095</td>
-                <td class="rate">3,165</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="currency">
-                    <span class="flag" aria-label="Drapeau du Royaume-Uni">🇬🇧</span>
-                    <span>
-                      <strong>GBP</strong>
-                      <span class="currency-name">Livre sterling</span>
-                    </span>
-                  </div>
-                </td>
-                <td class="rate">3,920</td>
-                <td class="rate">4,020</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="currency">
-                    <span class="flag" aria-label="Drapeau de la Suisse">🇨🇭</span>
-                    <span>
-                      <strong>CHF</strong>
-                      <span class="currency-name">Franc suisse</span>
-                    </span>
-                  </div>
-                </td>
-                <td class="rate">3,515</td>
-                <td class="rate">3,605</td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="currency">
-                    <span class="flag" aria-label="Drapeau du Canada">🇨🇦</span>
-                    <span>
-                      <strong>CAD</strong>
-                      <span class="currency-name">Dollar canadien</span>
-                    </span>
-                  </div>
-                </td>
-                <td class="rate">2,250</td>
-                <td class="rate">2,320</td>
-              </tr>
-            </tbody>
+            <tbody id="fx-body"></tbody>
           </table>
         </div>
       </article>
@@ -693,9 +636,6 @@
           </div>
 
           <div class="rate-bottom">
-            <button class="download-btn" id="download-btn" type="button">
-              Télécharger les données (CSV)
-            </button>
             <div id="status" role="status"></div>
           </div>
         </div>
