@@ -1,58 +1,62 @@
 {
-  "date": "2026-10-09",
-  "scraped_at": "2026-10-11T16:36:21.655534+00:00",
+  "date": "2026-10-12",
+  "scraped_at": "2026-10-12T20:10:40.942526+00:00",
   "rates": {
     "AED": {
-      "achat": 8.002,
-      "vente": 8.239
+      "achat": 8.02,
+      "vente": 8.258
     },
     "BHD": {
-      "achat": 7.745,
-      "vente": 8.02
+      "achat": 7.755,
+      "vente": 8.033
     },
     "CAD": {
       "achat": 2.07,
       "vente": 2.127
     },
     "CHF": {
-      "achat": 35.468,
-      "vente": 36.45
+      "achat": 35.475,
+      "vente": 36.455
+    },
+    "CNY": {
+      "achat": 0.439,
+      "vente": 0.452
     },
     "EUR": {
-      "achat": 3.316,
-      "vente": 3.396
+      "achat": 3.315,
+      "vente": 3.395
     },
     "GBP": {
-      "achat": 3.904,
-      "vente": 4.007
+      "achat": 3.912,
+      "vente": 4.016
     },
     "JPY": {
-      "achat": 18.568,
-      "vente": 19.103
+      "achat": 18.625,
+      "vente": 19.146
     },
     "KWD": {
-      "achat": 9.519,
-      "vente": 9.821
+      "achat": 9.525,
+      "vente": 9.845
     },
     "LYD": {
       "achat": 0.453,
       "vente": 0.472
     },
     "OMR": {
-      "achat": 7.594,
-      "vente": 7.86
+      "achat": 7.602,
+      "vente": 7.878
     },
     "QAR": {
-      "achat": 8.019,
-      "vente": 8.318
+      "achat": 8.025,
+      "vente": 8.322
     },
     "SAR": {
-      "achat": 7.828,
-      "vente": 8.06
+      "achat": 7.835,
+      "vente": 8.077
     },
     "USD": {
-      "achat": 2.954,
-      "vente": 3.026
+      "achat": 2.958,
+      "vente": 3.035
     }
   }
 }
